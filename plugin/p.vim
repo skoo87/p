@@ -7,7 +7,7 @@ let Project_Has_Been_Created = 0
 "
 function! Do_CsTagWithArgs(dir, tag, bg)
     if(executable('ctags'))
-        let my_ctag = "ctags"
+        let my_ctag = "/opt/local/bin/ctags"
         let my_opt = "-R --sort=yes --languages=c --c-kinds=+px --fields=+iaKSz --extra=+q --language-force=c"
         let my_cmd = my_ctag . " " . my_opt . " -f " . a:tag . " " . a:dir
 
@@ -34,13 +34,13 @@ function! Do_Ctags_Libs(dirs)
     echo "LIBS: " . a:dirs
 
     try
-        if (!isdirectory("vim_tags"))
-            call mkdir("vim_tags")
+        if (!isdirectory(".vim_tags"))
+            call mkdir(".vim_tags")
         endif
 
-        call Do_CsTagWithArgs(a:dirs, "vim_tags/libs.tag", 0)
+        call Do_CsTagWithArgs(a:dirs, ".vim_tags/libs.tag", 0)
     catch
-        echo "ERROR: \"vim_tags\" may be a file..."
+        echo "ERROR: \".vim_tags\" may be a file..."
     endtry
 endfunction
 
@@ -48,13 +48,13 @@ function! Do_Ctags_Project(dirs)
     echo "PROJECT: " . a:dirs
 
     try
-        if (!isdirectory("vim_tags"))
-            call mkdir("vim_tags")
+        if (!isdirectory(".vim_tags"))
+            call mkdir(".vim_tags")
         endif
 
-        call Do_CsTagWithArgs(a:dirs, "vim_tags/tags", 0)
+        call Do_CsTagWithArgs(a:dirs, ".vim_tags/tags", 0)
     catch
-        echo "ERROR: \"vim_tags\" may be a file."
+        echo "ERROR: \".vim_tags\" may be a file."
     endtry
 endfunction
 
@@ -69,13 +69,13 @@ function! Update_Ctags_Project(dirs)
     let s:update_tags_time = l:cur_time
 
     try
-        if (!isdirectory("vim_tags"))
-            call mkdir("vim_tags")
+        if (!isdirectory(".vim_tags"))
+            call mkdir(".vim_tags")
         endif
 
-        call Do_CsTagWithArgs(a:dirs, "vim_tags/tags", 1)
+        call Do_CsTagWithArgs(a:dirs, ".vim_tags/tags", 1)
     catch
-        echo "ERROR: \"vim_tags\" may be a file..."
+        echo "ERROR: \".vim_tags\" may be a file..."
     endtry
 endfunction
 
@@ -100,9 +100,9 @@ function! s:Init_Code_Dir()
     let l:l = 0
 
     try
-        let l:conf_cnt = readfile("vim.ini")
+        let l:conf_cnt = readfile(".vim.ini")
     catch
-        echo "ERROR: Don't have \"vim.ini\" in \"" . s:working_dir . "\""
+        echo "ERROR: Don't have \".vim.ini\" in \"" . s:working_dir . "\""
         return -1
     endtry
 
@@ -136,7 +136,7 @@ function! s:Get_All_Project_Code_Dirs()
     for p in s:project
         if (!isdirectory(p))
             echo 'ERROR: not have "' . p . '" directory in "' . s:working_dir . 
-                        \ '", please check "vim.ini"' 
+                        \ '", please check ".vim.ini"' 
             return ""
         endif
 
@@ -153,7 +153,7 @@ function! s:Get_All_Libs_Code_Dirs()
 
     for l in s:libs
         if (!isdirectory(l))
-            echo "ERROR: \"" . l . "\" is not a directory, please check \"vim.ini\""
+            echo "ERROR: \"" . l . "\" is not a directory, please check \".vim.ini\""
             return ""
         endif
 
@@ -212,13 +212,13 @@ function! Load_My_Project(dir)
     " set tags file
     "
     call Do_Ctags_Project(l:pro_dir)
-    set tags=vim_tags/libs.tag,vim_tags/tags
+    set tags=.vim_tags/libs.tag,.vim_tags/tags
     set tags
 
     " set file tags
     "
     call system("gen-file-tags")
-    let g:LookupFile_TagExpr = '"./vim_tags/file_tags"'
+    let g:LookupFile_TagExpr = '"./.vim_tags/file_tags"'
 
     " define command to update project's tags
     "
